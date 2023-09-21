@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/home">Laboratury</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/public/projects">Publications</a>
+                        </li>
+
+                        <ul class="nav">
+                            <li class="nav-item dropdown" sec:authorize="!isAuthenticated()">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Join</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="public/signin">Sign In</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="public/signup">Sign Up</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" th:text="${#authentication.name}"></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <form id="myForm" action="/ADMIN/personal_view" method="get">
+                                            <input type="hidden" name="username" th:value="${#authentication.name}" />
+                                        </form>
+
+                                        <a class="dropdown-item" href="#"
+                                            onclick="document.getElementById('myForm').submit();">Your Account</a>
+                                    </li>
+                                    <li>
+                                        <hr>
+                                    </li>
+                                    <li sec:authorize="hasRole('ROLE_ADMIN')"><a class="dropdown-item"
+                                            href="/ADMIN/dashboard">ADMIN Dashboard</a></li>
+                                    <li sec:authorize="hasRole('ROLE_STUDENT')"><a class="dropdown-item"
+                                            href="/STUDENT/dashboard">STUDENT Dashboard</a></li>
+                                    <li sec:authorize="hasRole('ROLE_PROF')"><a class="dropdown-item"
+                                            href="/PROF/dashboard">PROFESSOR Dashboard</a></li>
+                                    <li sec:authorize="hasRole('ROLE_DIRECTOR')"><a class="dropdown-item"
+                                            href="/DIRECTOR/dashboard">DIRECTOR Dashboard</a></li>
+                                    <li>
+                                        <hr>
+                                    </li>
+                                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+
+                    </ul>
+                    <form class="d-flex" role="search" action="/public/search" method="get">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Search"
+                            aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <form action="/STUDENT/newProject" method="post" style="margin-top: 5%;">
+            <button type="submit" class="btn btn-secondary btn-lg">Create new Post</button>
+        </form>
+
+
+
+        <div class="row row-cols-1 row-cols-md-3 g-4 mrg" style="margin-top: 5%;">
+            <div class="col-md-4" th:each="post : ${postes}">
+                <a th:href="@{/public/project/{id}(id=${post.title})}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div th:utext="${post.imageHeader}"></div>
+                            <h5 class="card-title" th:text="${post.title}"></h5>
+                            <p class="card-text" th:text="${post.header}"></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+
+        <footer class="text-center text-white" style="background-color: #1a1b1b">
+            <div class="container">
+                <section class="mt-5">
+                    <div class="row text-center d-flex justify-content-center pt-5">
+                        <div class="col-md-2">
+                            <h6 class="text-uppercase font-weight-bold">
+                                <a href="#!" class="text-white">About us</a>
+                            </h6>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="text-uppercase font-weight-bold">
+                                <a href="#!" class="text-white">Products</a>
+                            </h6>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="text-uppercase font-weight-bold">
+                                <a href="#!" class="text-white">Awards</a>
+                            </h6>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="text-uppercase font-weight-bold">
+                                <a href="#!" class="text-white">Help</a>
+                            </h6>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="text-uppercase font-weight-bold">
+                                <a href="#!" class="text-white">Contact</a>
+                            </h6>
+                        </div>
+                    </div>
+                </section>
+                <hr class="my-5" />
+                <section class="mb-5">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-lg-8">
+                            <p>
+                                this work is a mini-project of Java EE, in master of datascience and intelegent system.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                <section class="text-center mb-5">
+                    <a href="https://www.linkedin.com/in/jboussouf/" class="text-white me-4">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/jboussouf" class="text-white me-4">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </section>
+            </div>
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+                © 2020 Copyright:
+                <a class="text-white" href="https://jboussouf.github.io">jboussouf.github.io</a>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
